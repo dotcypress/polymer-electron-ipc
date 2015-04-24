@@ -1,0 +1,22 @@
+<link href="../polymer/polymer.html" rel="import">
+<link href="../polymer-electron-ipc/polymer-electron-ipc.html" rel="import">
+<link href="../paper-input/paper-input.html" rel="import">
+<polymer-element name="ipc-test" attributes="foo">
+    <template>
+        <polymer-electron-ipc id="ipc" channels="{{ $.input.value }}" on-ipc-message="{{ foo }}" />
+        <p>Last response: channel = {{ $.ipc.lastMessage.channel }}</p>
+        <p>Last response: message = {{ $.ipc.lastMessage.message }}</p>
+        <button id="send" on-click="{{send}}">Send message</button>
+        <paper-input id="input" />
+    </template>
+    <script>
+    Polymer('ipc-test', {
+        foo: function(ev, message) {
+            console.log(message); // {channel: 'channelName', message: 'message'}
+        },
+        send: function() {
+            this.$.ipc.send('sample-channel', 'ping');
+        }
+    });
+    </script>
+</polymer-element>

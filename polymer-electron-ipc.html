@@ -1,0 +1,41 @@
+<link rel="import" href="../polymer/polymer.html">
+<polymer-element name="polymer-electron-ipc" attributes="channels last-message">
+  <script>
+  Polymer('polymer-electron-ipc', {
+    channels: '',
+    created: function() {
+      this._ipc = require('ipc');
+      this._handlers = {};
+    },
+    channelsChanged: function(oldValue, newValue) {
+      var channels = newValue.split(' ');
+      var self = this;
+      for (var channel in self._handlers) {
+        if (!(channel in channels)) {
+          self._ipc.removeListener(channel, this._handlers[channel]);
+          delete this._handlers[channel];
+        }
+      }
+      channels.forEach(function(channel) {
+        if (typeof self._handlers[channel] === 'undefined') {
+          self._handlers[channel] = function(message) {
+            if (arguments.length > 1) {
+              message = Array.prototype.slice.call(arguments);
+            }
+            var payload = {
+              channel: channel,
+              message: message
+            };
+            self.fire('ipc-message', payload);
+            self.lastMessage = payload;
+          };
+        }
+        self._ipc.on(channel, self._handlers[channel]);
+      });
+    },
+    send: function() {
+      this._ipc.send.apply(this._ipc, Array.prototype.slice.call(arguments));
+    }
+  });
+  </script>
+</polymer-element>
