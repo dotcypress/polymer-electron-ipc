@@ -6,7 +6,7 @@ Only for [electron](https://github.com/atom/electron) based applications.
 
 # Installation
 
-`bower install bower install dotcypress/polymer-electron-ipc --save`
+`bower install dotcypress/polymer-electron-ipc --save`
 
 # Todo
 * Documentation
